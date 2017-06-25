@@ -1,11 +1,9 @@
 package com.mubin.archiver.compressor;
 
+import com.mubin.archiver.util.ZipUtils;
+
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author mubin
@@ -25,11 +23,7 @@ public class ZipCompressor extends Compressor {
 
     @Override
     protected FileSystem createFileSystem(String outputFilePath) throws IOException {
-        // setup ZipFileSystem
-        Map<String, String> env = new HashMap<>();
-        env.put("create", "true");
-        URI zipURI = URI.create(String.format("jar:file:%s", outputFilePath));
-        return FileSystems.newFileSystem(zipURI, env);
+        return ZipUtils.createFileSystem(outputFilePath);
     }
 
 

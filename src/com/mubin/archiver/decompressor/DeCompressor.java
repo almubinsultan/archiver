@@ -6,7 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static java.lang.System.*;
+import static java.lang.System.currentTimeMillis;
+import static java.lang.System.getProperty;
 
 /**
  * @author mubin
@@ -33,12 +34,16 @@ public abstract class DeCompressor {
     public final void process() {
         mergeFiles();
 
-        decompress();
+        try {
+            decompress();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         mergedInputFile.delete();
     }
 
-    protected abstract void decompress();
+    protected abstract void decompress() throws IOException;
 
     private void mergeFiles() {
         File inputFileDirectory = new File(inputFilePath);

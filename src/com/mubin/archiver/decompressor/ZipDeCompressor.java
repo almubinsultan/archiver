@@ -1,17 +1,14 @@
 package com.mubin.archiver.decompressor;
 
-import com.mubin.archiver.util.IOUtils;
+import com.mubin.archiver.util.ZipUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * @author mubin
- * @since 6/24/17
+ * @since 6/25/17
  */
 public class ZipDeCompressor extends DeCompressor {
 
@@ -20,56 +17,45 @@ public class ZipDeCompressor extends DeCompressor {
     }
 
     @Override
-    protected void decompress() {
-        byte[] buffer = new byte[1024 * 16];
+    protected void decompress() throws IOException {
+        final Path outputPath = Paths.get(outputFilePath);
 
-        /*
-         * Create output dir if not exists, if exists exit and print a message
-         */
-
-        File folder = new File(outputFilePath);
-
-        if (folder.exists()) {
+        if (Files.exists(outputPath)) {
             System.out.println(outputFilePath + " already exists!");
             return;
-        } else {
-            folder.mkdir();
         }
 
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(mergedInputFile))) {
+        Files.createDirectories(outputPath);
 
-            ZipEntry zipEntry = zipInputStream.getNextEntry();
+        try (FileSystem zipFileSystem = ZipUtils.createFileSystem(mergedInputFile.getPath())) {
+            final Path root = zipFileSystem.getPath("/");
 
-            while (zipEntry != null) {
+            Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
-                if (!zipEntry.isDirectory()) {
+                    final Path destFile = Paths.get(outputPath.toString(), file.toString());
 
-                    String fileName = zipEntry.getName();
-                    File newFile = new File(outputFilePath + File.separator + fileName);
+                    System.out.printf("inflating: %s ", file);
 
-                    System.out.println("inflating: " + fileName);
+                    Files.copy(file, destFile);
 
-                    new File(newFile.getParent()).mkdirs();
-
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(newFile)) {
-
-                        int byteCount;
-                        while (IOUtils.EOF != (byteCount = zipInputStream.read(buffer))) {
-                            fileOutputStream.write(buffer, 0, byteCount);
-                        }
-                    }
-
-                    zipInputStream.closeEntry();
+                    return FileVisitResult.CONTINUE;
                 }
 
-                zipEntry = zipInputStream.getNextEntry();
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir,
+                                                         BasicFileAttributes attrs) throws IOException {
+                    final Path dirToCreate = Paths.get(outputPath.toString(), dir.toString());
 
-            }
+                    if (Files.notExists(dirToCreate)) {
+                        Files.createDirectory(dirToCreate);
+                    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         }
 
     }
 }
-

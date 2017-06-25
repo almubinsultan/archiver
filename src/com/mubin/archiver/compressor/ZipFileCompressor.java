@@ -16,8 +16,7 @@ import java.nio.file.Path;
  */
 public class ZipFileCompressor extends AsyncFileCompressor {
 
-    public ZipFileCompressor(Path inputFile, FileSystem fileSystem,
-                             String rootInputFilePath) {
+    public ZipFileCompressor(Path inputFile, FileSystem fileSystem, String rootInputFilePath) {
         super(inputFile, fileSystem, rootInputFilePath);
 
         if (!(fileSystem instanceof ZipFileSystem)) {
@@ -37,7 +36,7 @@ public class ZipFileCompressor extends AsyncFileCompressor {
         try (FileInputStream in = new FileInputStream(inputFile.toFile());
              OutputStream out = Files.newOutputStream(path)) {
 
-            System.out.println("adding: " + path.toString());
+            System.out.printf("deflating: %s ", path.toString());
 
             return IOUtils.copy(in, out);
         }
