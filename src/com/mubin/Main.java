@@ -29,7 +29,9 @@ public class Main {
             String inputFilePath = "/Users/mubin/testzip/outputSource.zip";
             String outputFilePath = "/Users/mubin/testzip/inputSource-extracted";
 
-            ZipDeCompressor zipDeCompressor = new ZipDeCompressor(inputFilePath, outputFilePath);
+            ZipDeCompressor zipDeCompressor = new ZipDeCompressor(inputFilePath,
+                    outputFilePath,
+                    Runtime.getRuntime().availableProcessors());
 
             zipDeCompressor.process();
         } catch (Exception e) {

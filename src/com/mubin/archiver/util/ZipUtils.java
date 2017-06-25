@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class ZipUtils {
 
-    public static FileSystem createFileSystem(String outputFilePath) throws IOException {
+    public static FileSystem createFileSystem(String filePath) throws IOException {
         Map<String, String> env = new HashMap<>();
         env.put("create", "true");
-        URI zipURI = URI.create(String.format("jar:file:%s", outputFilePath));
+        URI zipURI = URI.create(String.format("jar:file:%s", filePath));
         return FileSystems.newFileSystem(zipURI, env);
     }
 
