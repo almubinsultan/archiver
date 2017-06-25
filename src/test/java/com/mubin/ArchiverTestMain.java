@@ -3,7 +3,7 @@ package com.mubin;
 import com.mubin.archiver.compressor.ZipCompressor;
 import com.mubin.archiver.decompressor.ZipDeCompressor;
 
-public class Main {
+public class ArchiverTestMain {
 
     public static void main(String[] args) {
         testZip();
