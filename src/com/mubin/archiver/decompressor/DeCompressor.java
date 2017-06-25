@@ -32,6 +32,8 @@ public abstract class DeCompressor {
     }
 
     public final void process() {
+        System.out.println("Starting decompression");
+
         mergeFiles();
 
         try {
@@ -41,6 +43,8 @@ public abstract class DeCompressor {
         }
 
         mergedInputFile.delete();
+
+        System.out.println("Finished!");
     }
 
     protected abstract void decompress() throws IOException;

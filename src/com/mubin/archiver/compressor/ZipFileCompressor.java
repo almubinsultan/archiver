@@ -36,7 +36,7 @@ public class ZipFileCompressor extends AsyncFileCompressor {
         try (FileInputStream in = new FileInputStream(inputFile.toFile());
              OutputStream out = Files.newOutputStream(path)) {
 
-            System.out.printf("deflating: %s ", path.toString());
+            System.out.printf("deflating: %s \n", path.toString());
 
             return IOUtils.copy(in, out);
         }

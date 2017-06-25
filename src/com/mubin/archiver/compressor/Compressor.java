@@ -40,9 +40,18 @@ public abstract class Compressor {
     protected abstract FileSystem createFileSystem(String outputFilePath) throws IOException;
 
     public final void process() {
+        System.out.println("Starting compression");
+
         compress();
 
-        splitFile();
+        if (maxCompressedSizeInBytes > 0) {
+            System.out.println("-----------------------------------");
+            System.out.println("Starting file split process");
+
+            splitFile();
+        }
+
+        System.out.println("Finished!");
     }
 
     private void compress() {

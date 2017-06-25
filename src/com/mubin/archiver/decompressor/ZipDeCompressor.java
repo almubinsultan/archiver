@@ -36,7 +36,7 @@ public class ZipDeCompressor extends DeCompressor {
 
                     final Path destFile = Paths.get(outputPath.toString(), file.toString());
 
-                    System.out.printf("inflating: %s ", file);
+                    System.out.printf("inflating: %s \n", file);
 
                     Files.copy(file, destFile);
 

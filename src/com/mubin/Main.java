@@ -16,8 +16,8 @@ public class Main {
             String outputFilePath = "/Users/mubin/testzip/outputSource.zip";
             ZipCompressor zipCompressor = new ZipCompressor(inputFilePath,
                     outputFilePath,
-                    5,
-                    1024 * 5);
+                    Runtime.getRuntime().availableProcessors(),
+                    1024 * 10); //1024 * 1024 * 50 (50mb)
 
 //            zipCompressor.process();
 
