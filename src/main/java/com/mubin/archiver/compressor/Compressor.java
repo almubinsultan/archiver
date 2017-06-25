@@ -77,7 +77,8 @@ public abstract class Compressor {
     }
 
     private void splitFile() {
-        byte[] buffer = new byte[maxCompressedSizeInBytes];
+        int bufferSize = bufferSize(maxCompressedSizeInBytes);
+        byte[] buffer = new byte[bufferSize];
 
         File rawOutputFile = new File(compressedRawOutputFilePath);
         String fileName = rawOutputFile.getName();
@@ -88,13 +89,31 @@ public abstract class Compressor {
         try (FileInputStream fis = new FileInputStream(rawOutputFile);
              BufferedInputStream bis = new BufferedInputStream(fis)) {
 
-            int bytesAmount = 0;
-            while ((bytesAmount = bis.read(buffer)) > 0) {
-                String filePartName = String.format("%s.%d", fileName, System.nanoTime());
-                File newFile = new File(outputFile, filePartName);
+            File partFile = new File(outputFile, getPartFileName(fileName));
+            FileOutputStream out = null;
 
-                try (FileOutputStream out = new FileOutputStream(newFile)) {
+            try {
+                out = new FileOutputStream(partFile);
+                int sizeInCurrentFile = 0;
+
+                int bytesAmount;
+                while ((bytesAmount = bis.read(buffer)) > 0) {
                     out.write(buffer, 0, bytesAmount);
+                    sizeInCurrentFile += bytesAmount;
+
+                    if (bytesAmount == bufferSize && (sizeInCurrentFile + bufferSize) > maxCompressedSizeInBytes) {
+                        out.close();
+
+                        partFile = new File(outputFile, getPartFileName(fileName));
+                        out = new FileOutputStream(partFile);
+                        sizeInCurrentFile = 0;
+                    }
+                }
+
+
+            } finally {
+                if (out != null) {
+                    out.close();
                 }
             }
         } catch (IOException e) {
@@ -102,6 +121,18 @@ public abstract class Compressor {
         }
 
         rawOutputFile.delete();
+    }
+
+    private String getPartFileName(String fileName) {
+        return String.format("%s.%d", fileName, System.nanoTime());
+    }
+
+    private int bufferSize(int maxCompressedSizeInBytes) {
+        if (maxCompressedSizeInBytes <= Runtime.getRuntime().maxMemory() / 2) {
+            return maxCompressedSizeInBytes;
+        }
+
+        return bufferSize(maxCompressedSizeInBytes / 2);
     }
 
 }

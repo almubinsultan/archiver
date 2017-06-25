@@ -25,7 +25,7 @@ public class Archiver {
         if (args.length == 3) {
             try {
                 maxFileSize = Integer.parseInt(args[2]);
-                maxFileSize = maxFileSize;
+                maxFileSize = maxFileSize * 1024 * 1024;
             } catch (NumberFormatException e) {
                 System.out.printf("Invalid maxFileSize provided");
 
