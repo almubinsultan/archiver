@@ -85,15 +85,14 @@ public abstract class Compressor {
         File outputFile = new File(outputFilePath);
         outputFile.mkdir();
 
-        //try-with-resources to ensure closing stream
         try (FileInputStream fis = new FileInputStream(rawOutputFile);
              BufferedInputStream bis = new BufferedInputStream(fis)) {
 
             int bytesAmount = 0;
             while ((bytesAmount = bis.read(buffer)) > 0) {
-                //write each chunk of data into separate file with different number in name
                 String filePartName = String.format("%s.%d", fileName, System.nanoTime());
                 File newFile = new File(outputFile, filePartName);
+
                 try (FileOutputStream out = new FileOutputStream(newFile)) {
                     out.write(buffer, 0, bytesAmount);
                 }

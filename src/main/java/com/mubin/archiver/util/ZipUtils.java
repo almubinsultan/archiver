@@ -17,6 +17,7 @@ public class ZipUtils {
         Map<String, String> env = new HashMap<>();
         env.put("create", "true");
         URI zipURI = URI.create(String.format("jar:file:%s", filePath));
+
         return FileSystems.newFileSystem(zipURI, env);
     }
 
